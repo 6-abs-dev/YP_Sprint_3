@@ -1,0 +1,29 @@
+services:
+  device:
+    build: .
+    ports:
+      - 8081:8081
+    depends_on:
+      - postgre
+    networks:
+      app-network-test:
+        ipv4_address: 173.17.0.4
+  postgre:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: your_username
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: smart_home
+    ports:
+      - 5432:5432
+    networks:
+      app-network-test:
+        ipv4_address: 173.17.0.5
+
+networks:
+  app-network-test:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 173.17.0.0/16
