@@ -1,0 +1,65 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: rem-telemetry
+  namespace: default
+  labels:
+    app: rem-telemetry
+  annotations:
+    deployment.kubernetes.io/revision: '1'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rem-telemetry
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rem-telemetry
+    spec:
+      containers:
+        - name: telemetry
+          image: ghcr.io/6-abs-dev/telemetry:latest
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rem-telemetry
+  namespace: default
+  labels:
+    app: rem-telemetry
+spec:
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+      nodePort: 30538
+  selector:
+    app: rem-telemetry
+  clusterIP: 10.100.175.87
+  clusterIPs:
+    - 10.100.175.87
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster

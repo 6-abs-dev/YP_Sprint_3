@@ -75,3 +75,30 @@ spring:
 ## Тестирование
 
 В проекте написаны модульные тесты для сервисов и контроллеров.
+
+## C4 System Context Diagram
+
+@startuml C4_Elements
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(personAlias, "Пользователь", "Пользователь умного дома")
+Container(containerAlias, "Приложение умного дома", "Java/Spring + Postgres", "Optional Description")
+System(systemAlias, "Датчик температуры", "Optional Description")
+
+Rel(personAlias, containerAlias, "Включает/выключает отопление, устанавливает температуру, получает данные о температуре", "Optional Technology")
+Rel(containerAlias, systemAlias, "Получает информацию, устанавливает температуру")
+@enduml
+
+![img.png](img.png)
+
+## Анализ приложения
+Приложение представляет из себя монолит, которое взаимодействует с пользователями и с датчиками температуры в доме. Позволяет пользователям включать/выключать обогрев, считывать температуру и устанавливать желаемую температуру.
+Язык програмирования - Java/Spring Boot
+База данных - PostgreSQL
+Приложение взаимодействует со своими компонентами синхронно по REST
+
+На основании анализа можно выделить следующие границы контекстов:
+1) Управление телеметрией
+2) Управление устройствами
+3) Пользователи
+4) Управление домом

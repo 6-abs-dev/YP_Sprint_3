@@ -1,0 +1,303 @@
+openapi: 3.0.3
+info:
+  title: Swagger Smart Home - OpenAPI 3.0
+  description: |-
+    Smart Home API
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: ionovmk@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+x-kusk:
+  upstream:
+    service:
+      name: rem-device
+      namespace: default
+      port: 8081
+tags:
+  - name: device
+    description: Interactions with device modules in your home
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: telemetry
+    description: Reading telemetry data
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+
+paths:
+  /device/{id}:
+    get:
+      tags:
+        - device
+      summary: Get heating system
+      description: Get heating system
+      operationId: getHeatingSystem
+      parameters:
+        - name: id
+          in: path
+          description: 'The device id that needs to be fetched.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeatingSystem'
+
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+    put:
+      tags:
+        - device
+      summary: Update heating system
+      description: Update heating system
+      operationId: updatePet
+      parameters:
+        - name: id
+          in: path
+          description: 'Device ID '
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update heating system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeatingSystem'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: HeatingSystem not found
+  /device/{id}/turn-on:
+    put:
+      tags:
+        - device
+      summary: Turn on heating system
+      description: Turn on heating system
+      operationId: turn_on
+      parameters:
+        - name: id
+          in: path
+          description: 'Device ID '
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Turn on heating system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeatingSystem'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeatingSystem'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: HeatingSystem not found
+  /device/{id}/turn-off:
+    put:
+      tags:
+        - device
+      summary: Turn off heating system
+      description: Turn off heating system
+      operationId: turn_off
+      parameters:
+        - name: id
+          in: path
+          description: 'Device ID '
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: HeatingSystem not found
+  /device/{id}/set-temperature:
+    put:
+      tags:
+        - device
+      summary: Sets temperature
+      description: Sets temperature
+      operationId: Sets temperature
+      parameters:
+        - name: id
+          in: path
+          description: 'Device ID '
+          required: true
+          schema:
+            type: string
+        - name: temperature
+          in: query
+          description: 'temperature'
+          required: true
+          schema:
+            type: string
+
+
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: HeatingSystem not found
+  /device/{id}/current-temperature:
+    get:
+      tags:
+        - device
+      summary: Gets current temperature
+      description: Gets current temperature
+      operationId: get_current_temperature
+      parameters:
+        - name: id
+          in: path
+          description: 'Device ID '
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeatingSystem'
+
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: HeatingSystem not found
+  /telemetry/{sensor_id}:
+    get:
+      tags:
+        - telemetry
+      summary: Gets telemetry history
+      description: Gets telemetry history
+      operationId: getTelemetryHistory
+      x-kusk:
+        upstream:
+          service:
+            name: rem-telemetry
+            namespace: default
+            port: 8082
+      parameters:
+        - name: sensor_id
+          in: path
+          description: 'The sensor id that needs to be fetched.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {
+                  $ref: '#/components/schemas/TemperatureSensor'
+                }
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Sensor not found
+  /telemetry/{sensor_id}/latest:
+    get:
+      tags:
+        - telemetry
+      summary: Gets last telemetry record
+      description: Gets last telemetry record
+      operationId: getLastTelemetryRecord
+      x-kusk:
+        upstream:
+          service:
+            name: rem-telemetry
+            namespace: default
+            port: 8082
+      parameters:
+        - name: sensor_id
+          in: path
+          description: 'The sensor id that needs to be fetched.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemperatureSensor'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Sensor not found
+components:
+  schemas:
+    HeatingSystem:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        isOn:
+          type: boolean
+          example: true
+        targetTemperature:
+          type: number
+          example: true
+        currentTemperature:
+          type: number
+          example: true
+    TemperatureSensor:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        currentTemperature:
+          type: number
+          example: 36,6
+        lastUpdated:
+          type: string
+          format: date-time
+
+
+  requestBodies:
+    HeatingSystem:
+      description: HeatingSystem object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HeatingSystem'
+
